@@ -32,20 +32,20 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano-rails', group: :development
 
 gem 'bootstrap-sass', '~> 3.1.1'            # Bootstrap integration
-gem 'faker', '1.1.2'                        # Create fake names for db seed
-gem 'will_paginate', '3.0.4'                # Pagination
 gem 'bootstrap-will_paginate', '~> 0.0.10'  # Bootstrap pagination support
+gem 'will_paginate', '3.0.4'                # Pagination
 gem 'autoprefixer-rails', '~> 4.0.2'        # Auto add all CSS browser prefixes
+gem 'faker', '1.1.2'                        # Create fake names for db seed
+gem 'figaro', '~> 1.0.0'                    # Manage ENV Variables
 
 gem 'mixpanel-ruby', '~> 1.6.0'             # mixpanel back-end analytics
 gem 'gabba', '~> 1.0.1'                     # Server-side google analytics
-gem 'figaro', '~> 1.0.0'                    # Manage ENV Variables
 
 gem 'themoviedb', '~> 0.1.0'                # Ruby wrapper for the movie database API
-gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses Nokogiri)
 gem 'badfruit', '~> 1.1.2'                  # Rotten Tomatoes API
 gem 'metacritic', '~> 0.1.1'                # Metacritic API
-gem 'filmbuff', '~> 0.1.6'                  # IMDB API #2 (uses JSON API)
+gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses Nokogiri - more popular)
+gem 'filmbuff', '~> 0.1.6'                  # IMDB API #2 (uses JSON API - maybe faster?)
 
 
 group :development, :test do
