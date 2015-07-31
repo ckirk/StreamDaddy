@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150609064606) do
+ActiveRecord::Schema.define(version: 20150731184657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,13 +24,35 @@ ActiveRecord::Schema.define(version: 20150609064606) do
     t.integer  "runtime"
     t.string   "imdb_id"
     t.integer  "tmdb_id"
-    t.string   "overview"
+    t.string   "synopsis"
     t.string   "tagline"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.string   "content_rating"
+    t.integer  "netflix_score"
+    t.integer  "rt_score"
+    t.integer  "rt_audience"
+    t.integer  "metacritic_score"
+    t.integer  "imdb_score"
   end
 
   add_index "movies", ["title"], name: "index_movies_on_title", using: :btree
+
+  create_table "netflix_movies", force: :cascade do |t|
+    t.integer  "movie_id"
+    t.boolean  "available"
+    t.datetime "available_since"
+    t.datetime "expires"
+    t.string   "provider_id"
+    t.string   "page_link"
+    t.string   "play_link"
+    t.string   "queue_link"
+    t.string   "stream_quality"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "netflix_movies", ["movie_id"], name: "index_netflix_movies_on_movie_id", using: :btree
 
   create_table "provider_movie", id: false, force: :cascade do |t|
     t.integer "provider_id", null: false
