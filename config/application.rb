@@ -8,6 +8,9 @@ Bundler.require(*Rails.groups)
 
 module StreamDaddy
   class Application < Rails::Application
+
+    Figaro.load # added to fix figaro gem bug in rails 4.2 (usually not need - can remove when bug is fixed) - ENV variables wont be set unless this line is here right now
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

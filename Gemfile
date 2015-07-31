@@ -36,16 +36,19 @@ gem 'bootstrap-will_paginate', '~> 0.0.10'  # Bootstrap pagination support
 gem 'will_paginate', '3.0.4'                # Pagination
 gem 'autoprefixer-rails', '~> 4.0.2'        # Auto add all CSS browser prefixes
 gem 'faker', '1.1.2'                        # Create fake names for db seed
-gem 'figaro', '~> 1.0.0'                    # Manage ENV Variables
+gem 'figaro', '~> 1.1.1'                    # Manage ENV Variables
 
 gem 'mixpanel-ruby', '~> 1.6.0'             # mixpanel back-end analytics
 gem 'gabba', '~> 1.0.1'                     # Server-side google analytics
 
-gem 'themoviedb', '~> 0.1.0'                # Ruby wrapper for the movie database API
-gem 'badfruit', '~> 1.1.2'                  # Rotten Tomatoes API
-gem 'metacritic', '~> 0.1.1'                # Metacritic API
-gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses Nokogiri - more popular)
-gem 'filmbuff', '~> 0.1.6'                  # IMDB API #2 (uses JSON API - maybe faster?)
+# gem 'themoviedb', '~> 0.1.0'                # Ruby wrapper for the movie database API
+# gem 'badfruit', '~> 1.1.2'                  # Rotten Tomatoes API
+#gem 'metacritic', '~> 0.1.1'                # Metacritic API
+# gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses Nokogiri - more popular)
+# gem 'filmbuff', '~> 0.1.6'                  # IMDB API #2 (uses JSON API - maybe faster?)
+gem 'importio', '~> 2.0.1'                  # Import.io gem by Import.io
+gem 'httparty', '~> 0.13.5'
+#gem 'worth_watching', '~> 1.0.0'            # IMDB, Metacritic, and Rotten Tomatoes Reviews
 
 
 group :development, :test do

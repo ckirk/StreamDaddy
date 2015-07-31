@@ -1,0 +1,8 @@
+<% @movies.each do |result| %>
+	<%= image_tag result["thumbnail"] %><br>
+	<b><%= result["title"] %></b><br>
+	Synopsis: <%= result["synopsis"] %><br>
+	Released: <%= result["year"] %><br>
+	Rating: <%= result["rating"] %><br>
+	<br>
+<% end %>

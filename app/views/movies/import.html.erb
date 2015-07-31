@@ -1,0 +1,6 @@
+<b>Skipped: <%= @skipped %><br><br><b>
+<b>Imported: <%= @imported_movies.length %><b><br><br>
+
+<% @imported_movies.each do |import| %>
+	<%= import %><br>
+<% end %>
