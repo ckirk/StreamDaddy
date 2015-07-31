@@ -1,0 +1,2 @@
+class NetflixMoviesController < ApplicationController
+end

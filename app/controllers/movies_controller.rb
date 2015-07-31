@@ -22,26 +22,37 @@ class MoviesController < ApplicationController
 
 	  @movies = response["results"]
 
-	  # "title"=>"009-1: The End of the Beginning",
-	  # "synopsis"=>"A female cyborg spy designed to be a cold-hearted killing machine sets out to bust a human trafficking ring and rescue the scientist who created her.",
-	  # "thumbnail"=>"http://cdn0.nflximg.net/images/8786/21258786.jpg",
-	  # "year"=>2013.0,
-	  # "rating"=>"NR",
-	  # "runtime"=>85.0,
-	  # "quality"=>"SuperHD",
-	  # "netflix_rating"=>2.6,
-	  # "netflix_page"=>"http://www.netflix.com/title/80048948",
-	  # "play_link"=>"http://www.netflix.com/watch/80048948?devKey=mvxgt6dvdvkdabunfb9s2ajq&nbb=y",
-	  # "available_since"=>"Jun 01 '15",
+    @movies.first do |movie|
+      @title = movie["title"]
+      @poster_url = movie["thumbnail"]
+      @synopsis = movie["synopsis"]
+      @director = movie["director"]
+      @release_date = movie["year"]
+      @release_year = movie["year/_source"] # string
+      @runtime = movie["runtime"]
+      @content_rating = movie["rating"]
+      @netflix_score = movie["netflix_rating"]
+      @rt_score = movie["rt_meter"]
+      @rt_audience = movie["rt_audience"]
+
+      @available = true
+      @available_since = movie["available_since"]
+      @page_link = movie["netflix_page"]
+      @play_link = movie["play_link"]
+      # @queue_link
+      @stream_quality = movie["stream_quality"]
+      @provider_id = @page_link.match(/netflix.com\/title\/([0-9]+)/).captures[0]
+
+    end
 
   end
 
   def import
 
-    pages = 4
+    pages = 5
     @imported_movies = []
     @skipped = 0
-    @skipped_movies = []
+    @netflix_movie_created = 0
 
     # Search Params
     content_type = "content_type=1"
@@ -55,15 +66,35 @@ class MoviesController < ApplicationController
       url = CGI.escape("http://instantwatcher.com/search?page=#{page}&#{content_type}&#{sort}&#{view}")
       response = HTTParty.get("https://api.import.io/store/data/800dd083-18a5-4b58-99b2-98dd7f844a27/_query?input/webpage/url=#{url}&_user=#{user}&_apikey=#{api_key}")
     
-      @results = response["results"]
+      @results = response['results']
 
       @results.each do |result|
-        if Movie.find_by_title(result["title"]).nil?
-          Movie.create(
-            title: result["title"],
-            overview: result["synopsis"]
+        if Movie.find_by_title(result['title']).nil?
+          movie = Movie.create(
+            title: result['title'],
+            poster_url: result['thumbnail'],
+            synopsis: result['synopsis'],
+            director: result['director'],
+            release_year: Time.at(result['year/_source'].to_f),
+            ## release_date: result['year/_source'], # string
+            runtime: result['runtime'],
+            content_rating: result['rating'],
+            netflix_score: result['netflix_rating'],
+            rt_score: result['rt_meter'],
+            rt_audience: result['rt_audience']
           )
-          @imported_movies.push(result["title"])
+          NetflixMovie.create(
+            movie_id: movie.id,
+            available: true,
+            available_since: result['available_since'],
+            page_link: result['netflix_page'],
+            play_link: result['play_link'],
+            stream_quality: result['stream_quality'],
+            provider_id: result['netflix_page'].match(/netflix.com\/title\/([0-9]+)/).captures[0]
+            ## queue_link
+          )
+          @imported_movies.push(result['title'])
+          @netflix_movie_created += 1
         else
           @skipped += 1
         end
