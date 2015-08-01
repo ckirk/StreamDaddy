@@ -1,6 +1,6 @@
 class MoviesController < ApplicationController
   def index
-  	@movies = Movie.all
+  	@movies = Movie.all.paginate(:page => params[:page], :per_page => 50)
   end
 
   def show
@@ -21,6 +21,8 @@ class MoviesController < ApplicationController
 		response = HTTParty.get("https://api.import.io/store/data/800dd083-18a5-4b58-99b2-98dd7f844a27/_query?input/webpage/url=#{url}&_user=#{user}&_apikey=#{api_key}")
 
 	  @movies = response["results"]
+    @first = response["results"][0]['available_since']
+    @date = @first
 
     @movies.first do |movie|
       @title = movie["title"]
@@ -49,7 +51,7 @@ class MoviesController < ApplicationController
 
   def import
 
-    pages = 5
+    pages = 60
     @imported_movies = []
     @skipped = 0
     @netflix_movie_created = 0
@@ -86,7 +88,7 @@ class MoviesController < ApplicationController
           NetflixMovie.create(
             movie_id: movie.id,
             available: true,
-            available_since: result['available_since'],
+            available_since: DateTime.strptime(result['available_since'], "%b %d '%y"),
             page_link: result['netflix_page'],
             play_link: result['play_link'],
             stream_quality: result['stream_quality'],

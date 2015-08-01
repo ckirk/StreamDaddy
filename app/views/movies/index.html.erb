@@ -1,5 +1,23 @@
-<h1><%= pluralize(@movies.count, "Movie") %></h1>
+<div class="movies_container">
+	<h1><%= pluralize(@movies.count, "Movie") %></h1>
 
-<% @movies.each do |m| %>
-	<%= m.title %><br>
-<% end %>
+	<% @movies.each do |m| %>
+		<div>
+		<h3><b><%= m.title %></b></h3>
+		<%= image_tag m.poster_url %><br>
+		<b>Synopsis:</b> <%= m.synopsis %><br>
+		<b>Runtime:</b> <%= m.runtime %> Minutes<br>
+		<b>Director:</b> <%= m.director %><br>
+		<b>Release Year:</b> <%= m.release_year %><br>
+		<b>Rated:</b> <%= m.content_rating %><br>
+		<% if !m.rt_score.nil? %>
+			<b>Rotten Tomatoes Score:</b> <%= m.rt_score %>%<br>
+		<% end %>
+		<b>Available Since:</b> <%= m.netflix_movie.available_since.strftime("%B %d, %Y") %><br>
+		<b>Netflix ID:</b> <%= link_to "netflix", m.netflix_movie.page_link %><br>
+		<hr>
+
+	<% end %><br>
+
+	<%= will_paginate @posts %>
+</div>
