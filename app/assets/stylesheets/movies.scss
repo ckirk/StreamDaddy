@@ -6,3 +6,23 @@
 	padding: 30px;
 	padding-top: 0;
 }
+
+.movie_container {
+	height: 150px;
+	background-color: #ddd;
+	margin-bottom: 20px;
+	.thumbnail {
+		float: left;
+		height: 100%;
+		width: 110px;
+		padding: 0;
+	}
+	.info_box {
+		overflow: hidden;
+		height: 100%;
+		padding: 10px;
+		h4 {
+			margin-top: 0;
+		}
+	}
+}

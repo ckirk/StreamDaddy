@@ -1,6 +1,7 @@
 class MoviesController < ApplicationController
   def index
-  	@movies = Movie.all.paginate(:page => params[:page], :per_page => 50)
+  	# @movies = Movie.all.includes(:netflix_movie).order('netflix_movie.stream_quality desc').limit(5)
+    @movies = Movie.all.includes(:netflix_movie).paginate(:page => params[:page], :per_page => 50)
   end
 
   def show
@@ -50,8 +51,8 @@ class MoviesController < ApplicationController
   end
 
   def import
-
-    pages = 60
+    start = 160
+    stop = 170
     @imported_movies = []
     @skipped = 0
     @netflix_movie_created = 0
@@ -64,14 +65,17 @@ class MoviesController < ApplicationController
     user = "8ef67b8a-116a-4c74-9dc8-8ea25812e8a3"
     api_key = "8ef67b8a116a4c749dc88ea25812e8a300a3cd5adc1ad5e037db4e05ddb64d8459a5fbe3e4dbb4f019289026606b5036f88372cfd840d269296d08b44e85fb3747a99697b100c6d9a8d62ef0452d4aa7"
 
-    (1..pages).each do |page|
+    (start..stop).each do |page|
       url = CGI.escape("http://instantwatcher.com/search?page=#{page}&#{content_type}&#{sort}&#{view}")
       response = HTTParty.get("https://api.import.io/store/data/800dd083-18a5-4b58-99b2-98dd7f844a27/_query?input/webpage/url=#{url}&_user=#{user}&_apikey=#{api_key}")
-    
+      logger.info "Requesting Page #{page}..."
+
       @results = response['results']
 
       @results.each do |result|
-        if Movie.find_by_title(result['title']).nil?
+        logger.info "Checking for entry in db..."
+        netflix_id = result['netflix_page'].match(/netflix.com\/title\/([0-9]+)/).captures[0]
+        if NetflixMovie.find_by_provider_id(netflix_id).nil?
           movie = Movie.create(
             title: result['title'],
             poster_url: result['thumbnail'],
@@ -85,6 +89,9 @@ class MoviesController < ApplicationController
             rt_score: result['rt_meter'],
             rt_audience: result['rt_audience']
           )
+          if movie.save
+            logger.info "Movie Created: #{result['title']}"
+          end
           NetflixMovie.create(
             movie_id: movie.id,
             available: true,
@@ -92,18 +99,24 @@ class MoviesController < ApplicationController
             page_link: result['netflix_page'],
             play_link: result['play_link'],
             stream_quality: result['stream_quality'],
-            provider_id: result['netflix_page'].match(/netflix.com\/title\/([0-9]+)/).captures[0]
+            provider_id: netflix_id
             ## queue_link
           )
           @imported_movies.push(result['title'])
           @netflix_movie_created += 1
         else
           @skipped += 1
+          logger.info "Movie Skipped (#{@skipped})"
         end
       end
 
     end
-
+    logger.info "---------------"
+    logger.info "IMPORT COMPLETE"
+    logger.info "---------------"
+    logger.info "Scanned pages #{start}-#{stop} (#{stop-start} Pages Total)"
+    logger.info "Imported #{@imported_movies.length} Moives"
+    logger.info "Skipped #{@skipped} Moives"
   end
 
 end

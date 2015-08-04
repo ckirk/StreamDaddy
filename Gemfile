@@ -30,9 +30,10 @@ gem 'gabba', '~> 1.0.1'                     # Server-side google analytics
 # gem 'themoviedb', '~> 0.1.0'                # Ruby wrapper for the movie database API
 # gem 'badfruit', '~> 1.1.2'                  # Rotten Tomatoes API
 # gem 'metacritic', '~> 0.1.1'                # Metacritic API
-# gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses Nokogiri - more popular)
+gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses Nokogiri - more popular)
 # gem 'filmbuff', '~> 0.1.6'                  # IMDB API #2 (uses JSON API - maybe faster?)
-# gem 'worth_watching', '~> 1.0.0'            # IMDB, Metacritic, and Rotten Tomatoes Reviews
+gem 'worth_watching', '~> 1.0.0'            # IMDB, Metacritic, and Rotten Tomatoes Reviews
+gem 'tmdb_party', '~> 0.9.0'
 
 
 group :development, :test do
