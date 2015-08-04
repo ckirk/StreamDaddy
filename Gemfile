@@ -34,6 +34,7 @@ gem 'imdb', '~> 0.8.2'                      # Ruby wrapper for IMDB API (uses No
 # gem 'filmbuff', '~> 0.1.6'                  # IMDB API #2 (uses JSON API - maybe faster?)
 gem 'worth_watching', '~> 1.0.0'            # IMDB, Metacritic, and Rotten Tomatoes Reviews
 gem 'tmdb_party', '~> 0.9.0'
+# IMDB API http://www.omdbapi.com/
 
 
 group :development, :test do
