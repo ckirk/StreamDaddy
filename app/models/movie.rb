@@ -10,7 +10,7 @@ class Movie < ActiveRecord::Base
 	# 	aggregator = WorthWatching::Aggregator.new(ENV["rt_api_key"], ENV["tmdb_api_key"])
 	# end
 
-	def get_scores
+	def get_info
 		self.get_tmdb_id
 		self.get_imdb_id
 		self.get_imdb_score
