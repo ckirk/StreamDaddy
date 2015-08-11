@@ -222,5 +222,37 @@ class Movie < ActiveRecord::Base
 		logger.info "Imported #{@imported} Moives"
 		logger.info "Skipped #{@skipped} Moives"
 	end
+
+	def self.hbo
+		# http://catalog.lv3.hbogo.com/apps/mediacatalog/rest/productBrowseService/HBO/category/INDB487
+
+		response = HTTParty.get("http://catalog.lv3.hbogo.com/apps/mediacatalog/rest/productBrowseService/HBO/category/INDB487.json")
+		response['response']['body']['productResponses']['featureResponse']
+		@results = response['response']['body']['productResponses']['featureResponse']
+
+		@results.each do |result|
+			# connect hbo data to an actual movie (need master movie list [imdb])
+			# if movie isn't already in movie table
+				# add to movie table
+			# add movie to hbo db
+
+
+			# result['title']
+			# result['year']
+			# result['hboInternalId']
+			# result['startDate']
+			# result['endDate']
+			# result['videoAvailable']
+
+			# result['shortSummary']
+			# result['summary']
+			# result['TKey']
+			# result['language']
+			# result['focusId']
+			# result['evergreen']
+
+		end
+		
+	end
 		 
 end
