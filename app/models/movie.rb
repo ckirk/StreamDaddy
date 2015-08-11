@@ -17,6 +17,25 @@ class Movie < ActiveRecord::Base
 		self.get_metacritic_score
 	end
 
+	def get_imdbid
+		if self.imdb_id.nil?
+			movie = self.omdb_search(self.title, self.release_year)
+			if movie[:title].nil?
+				logger.info "No Movie Found"
+			else
+				self.imdb_id = movie[:imdb_id]
+				if self.save
+					logger.info "IMDB_id: #{movie[:imdb_id]}"
+				else
+					logger.info "failed to save"
+				end
+			end
+		else
+			logger.info "Already have IMDB_id"
+		end
+
+	end
+
 	def self.collect_ratings(first = 1, total = 1)
 		Rails.logger.level = 1
 		last = first + total - 1
@@ -116,6 +135,7 @@ class Movie < ActiveRecord::Base
 		end
 	end
 
+	# import.io metacritic api
 	def get_metacritic_score
 		if self.metacritic_score.nil?
 			title = CGI.escape(self.title)
@@ -231,9 +251,15 @@ class Movie < ActiveRecord::Base
 		@results = response['response']['body']['productResponses']['featureResponse']
 
 		@results.each do |result|
+			
 			# connect hbo data to an actual movie (need master movie list [imdb])
+			imdb_id = result.omdb_search(result['title'], result['year'])[:imdb_id]
+			
 			# if movie isn't already in movie table
+			unless Movie.find_by_imdb_id(imdb_id)
 				# add to movie table
+			end
+			
 			# add movie to hbo db
 
 
@@ -253,6 +279,24 @@ class Movie < ActiveRecord::Base
 
 		end
 		
+	end
+
+	# OMDB API (imdb)
+	def self.omdb_search(title, year)
+		title = CGI.escape(title)
+		# http://www.omdbapi.com/?t=the matrix&y=1999&type=movie&tomatoes=true
+		response = HTTParty.get("http://www.omdbapi.com/?t=#{title}&y=#{year}&type=movie&tomatoes=true")
+		movie = { title: response['Title'],
+							year: response['Year'],
+							rating: response['Rated'],
+							released: response['Released'],
+							runtime: response['Runtime'],
+							metacritic: response['Metascore'],
+							imdb: response['imdbRating'],
+							imdb_id: response['imdbID'],
+							rt_meter: response['tomatoMeter'],
+							rt_user: response['tomatoUserMeter']
+						}
 	end
 		 
 end
