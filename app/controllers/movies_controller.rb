@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
   def index
   	# @movies = Movie.all.includes(:netflix_movie).order('netflix_movie.stream_quality desc').limit(5)
-    @movies = Movie.all.includes(:netflix_movie).paginate(:page => params[:page], :per_page => 50)
+    @movies = Movie.all.includes(:netflix_movie).order(created_at: :desc).paginate(:page => params[:page], :per_page => 50)
   end
 
   def show
