@@ -11,10 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150731222028) do
+ActiveRecord::Schema.define(version: 20150928042631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "hbo_movies", force: :cascade do |t|
+    t.integer  "movie_id"
+    t.boolean  "available"
+    t.datetime "available_since"
+    t.datetime "expires"
+    t.string   "provider_id"
+    t.string   "page_link"
+    t.string   "play_link"
+    t.string   "queue_link"
+    t.string   "stream_quality"
+    t.string   "summary"
+    t.string   "short_summary"
+    t.string   "format_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "hbo_movies", ["movie_id"], name: "index_hbo_movies_on_movie_id", using: :btree
 
   create_table "movies", force: :cascade do |t|
     t.string   "title"

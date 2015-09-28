@@ -251,7 +251,7 @@ class Movie < ActiveRecord::Base
 		@results = response['response']['body']['productResponses']['featureResponse']
 
 		@results.each do |result|
-			
+			hbo_id = result['hboInternalId']
 			# connect hbo data to an actual movie (need master movie list [imdb])
 			imdb_id = result.omdb_search(result['title'], result['year'])[:imdb_id]
 			
