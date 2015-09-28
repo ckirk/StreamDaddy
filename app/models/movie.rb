@@ -206,7 +206,7 @@ class Movie < ActiveRecord::Base
 		        poster_url: result['thumbnail'],
 		        synopsis: result['synopsis'],
 		        director: result['director'],
-		        release_year: Time.at(result['year/_source'].to_f),
+		        release_year: result['year'],
 		        runtime: result['runtime'],
 		        content_rating: result['rating'],
 		        netflix_score: result['netflix_rating'],
@@ -220,7 +220,7 @@ class Movie < ActiveRecord::Base
 		      NetflixMovie.create(
 		        movie_id: movie.id,
 		        available: true,
-		        available_since: DateTime.strptime(result['available_since'], "%b %d '%y"),
+		        available_since: DateTime.strptime(result['available_since'], "%b %d, %Y"),
 		        page_link: result['netflix_page'],
 		        play_link: result['play_link'],
 		        stream_quality: result['stream_quality'],

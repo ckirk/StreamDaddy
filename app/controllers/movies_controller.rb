@@ -50,9 +50,7 @@ class MoviesController < ApplicationController
 
   end
 
-  def import
-    start = 160
-    stop = 170
+  def import(start = 1, stop = 2)
     @imported_movies = []
     @skipped = 0
     @netflix_movie_created = 0
@@ -65,6 +63,7 @@ class MoviesController < ApplicationController
     user = "8ef67b8a-116a-4c74-9dc8-8ea25812e8a3"
     api_key = "8ef67b8a116a4c749dc88ea25812e8a300a3cd5adc1ad5e037db4e05ddb64d8459a5fbe3e4dbb4f019289026606b5036f88372cfd840d269296d08b44e85fb3747a99697b100c6d9a8d62ef0452d4aa7"
 
+    # http://instantwatcher.com/search?page=1&content_type=1&sort=available_from%20desc&view=synopsis
     (start..stop).each do |page|
       url = CGI.escape("http://instantwatcher.com/search?page=#{page}&#{content_type}&#{sort}&#{view}")
       response = HTTParty.get("https://api.import.io/store/data/800dd083-18a5-4b58-99b2-98dd7f844a27/_query?input/webpage/url=#{url}&_user=#{user}&_apikey=#{api_key}")
@@ -81,7 +80,7 @@ class MoviesController < ApplicationController
             poster_url: result['thumbnail'],
             synopsis: result['synopsis'],
             director: result['director'],
-            release_year: Time.at(result['year/_source'].to_f),
+            release_year: result['year'],
             ## release_date: result['year/_source'], # string
             runtime: result['runtime'],
             content_rating: result['rating'],
