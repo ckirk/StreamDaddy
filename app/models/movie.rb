@@ -1,5 +1,6 @@
 class Movie < ActiveRecord::Base
 	has_one :netflix_movie
+	has_one :hbo_movie
 
 	# NEXT STEPS
 		# Import movie lists for Netflix and HBO Go to db
@@ -239,11 +240,14 @@ class Movie < ActiveRecord::Base
 		logger.info "IMPORT COMPLETE"
 		logger.info "---------------"
 		logger.info "Scanned pages #{start_page}-#{stop_page} (#{stop_page-start_page+1} Pages Total)"
-		logger.info "Imported #{@imported} Moives"
-		logger.info "Skipped #{@skipped} Moives"
+		logger.info "Imported #{@imported} Movies"
+		logger.info "Skipped #{@skipped} Movies"
 	end
 
 	def self.hbo
+		Rails.logger.level = 1
+		@imported = 0
+		@skipped = 0
 		# http://catalog.lv3.hbogo.com/apps/mediacatalog/rest/productBrowseService/HBO/category/INDB487
 
 		response = HTTParty.get("http://catalog.lv3.hbogo.com/apps/mediacatalog/rest/productBrowseService/HBO/category/INDB487.json")
@@ -252,13 +256,83 @@ class Movie < ActiveRecord::Base
 
 		@results.each do |result|
 			hbo_id = result['hboInternalId']
-			# connect hbo data to an actual movie (need master movie list [imdb])
-			imdb_id = result.omdb_search(result['title'], result['year'])[:imdb_id]
-			
-			# if movie isn't already in movie table
-			unless Movie.find_by_imdb_id(imdb_id)
-				# add to movie table
+			title = result['title']
+			release_year = result['year']
+			t_key = result['TKey']
+
+			# video responses object contains info on movie, but also previews
+			# must iterate over to find full movie version
+			video_responses = result['videoResponses']
+			video_responses.each do |response|
+				if response['mediaSubType'] == 'PRO12_VIDEO'
+					@content_rating = response['rating']
+					@runtime = response['runtime']
+					@stream_quality = response['videoType']
+				end
 			end
+
+			# detail response contains extra data for individual movie (including director)
+			# not using right now
+			# detail_response = HTTParty.get("http://catalog.lv3.hbogo.com/apps/mediacatalog/rest/productInfoService/HBO/feature/#{t_key}.json")
+
+			if HboMovie.find_by_provider_id(hbo_id).nil?
+				if Movie.where(title: title, release_year: release_year).empty?
+					movie = Movie.create(
+							title: title,
+							synopsis: result['summary'],
+							# director: result['director'],
+							release_year: release_year,
+							runtime: @runtime, 
+							content_rating: @content_rating
+						)
+					if movie.save
+					  logger.info "Movie Created -- #{movie.title}"
+					  @imported += 1
+					end
+
+					HboMovie.create(
+					  movie_id: movie.id,
+					  available: true,
+					  available_since: result['startDate'],
+					  expires: result['endDate'],
+					  provider_id: hbo_id,
+					  stream_quality: @stream_quality,
+					  t_key: t_key, # hbo internal reference for individual movie data
+					  short_summary: result['short_summary']
+					)
+				else
+					existing_movie = Movie.where(title: title, release_year: release_year).first
+					HboMovie.create(
+					  movie_id: existing_movie.id,
+					  available: true,
+					  available_since: result['startDate'],
+					  expires: result['endDate'],
+					  provider_id: hbo_id,
+					  stream_quality: @stream_quality,
+					  t_key: t_key, # hbo internal reference for individual movie data
+					  short_summary: result['short_summary']
+					)
+					logger.info "** Movie Already In Main DB -- Added To HBO -- #{result['title']}"
+					@imported += 1
+				end
+
+				# movie data details: http://catalog.lv3.hbogo.com/apps/mediacatalog/rest/productInfoService/HBO/feature/GOROSTGP46421
+				# last number is t_key
+
+			else
+			  @skipped += 1
+			  logger.info "** Movie Skipped (#{@skipped}) -- #{result['title']}"
+			end
+		end
+		logger.info "---------------"
+		logger.info "IMPORT COMPLETE"
+		logger.info "---------------"
+		logger.info "Imported #{@imported} Movies"
+		logger.info "Skipped #{@skipped} Movies"
+	end
+
+			# connect hbo data to an actual movie (need master movie list [imdb])
+			# imdb_id = result.omdb_search(result['title'], result['year'])[:imdb_id]
 			
 			# add movie to hbo db
 
@@ -276,10 +350,6 @@ class Movie < ActiveRecord::Base
 			# result['language']
 			# result['focusId']
 			# result['evergreen']
-
-		end
-		
-	end
 
 	# OMDB API (imdb)
 	def self.omdb_search(title, year)
