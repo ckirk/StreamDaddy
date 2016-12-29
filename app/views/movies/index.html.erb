@@ -5,7 +5,7 @@
 	<% @movies.each do |m| %>
 		<div class="movie_container">
 			<div class="thumbnail">
-				<%= image_tag "http://cdn-3.nflximg.com/us/boxshots/large/#{m.netflix_movie.provider_id}.jpg" %>
+				<%= image_tag "http://cdn-3.nflximg.com/us/boxshots/large/#{m.netflix_movie.provider_id}.jpg" if m.netflix_movie %>
 			</div>
 			<div class="info_box">
 				<h4><%= m.title %></h4>
@@ -13,7 +13,7 @@
 				<%= m.synopsis %><br>
 				<b>Release Year:</b> <%= m.release_year %> |
 				<b>Runtime:</b> <%= m.runtime %> Minutes |
-				<b>Director:</b> <%= m.director %><br>
+				<b>Director:</b> <%#= m.director %><br>
 				<!-- <b>Rated:</b> <%= m.content_rating %><br> -->
 				<% if !m.rt_score.nil? %>
 					<% if m.rt_score > 59 %>
@@ -21,7 +21,7 @@
 					<b>Rotten Tomatoes:</b> <%= m.rt_score %>%<br>
 				<% end %>
 				<!-- <b>Available Since:</b> <%#= m.netflix_movie.available_since.strftime("%B %d, %Y") %><br> -->
-				<%= link_to "Netflix", m.netflix_movie.page_link %><br>
+				<%#= link_to "Netflix", m.netflix_movie.page_link %><br>
 			</div>
 			
 		</div>

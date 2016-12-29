@@ -1,0 +1,32 @@
+<div class="movies_container">
+
+	<h1>Movies avalable on HBO (<%= pluralize(@movies.count, "Movie") %>)</h1>
+
+	<% @movies.each do |m| %>
+		<div class="movie_container">
+			<div class="thumbnail">
+				<%#= image_tag "http://cdn-3.nflximg.com/us/boxshots/large/#{m.netflix_movie.provider_id}.jpg" %>
+			</div>
+			<div class="info_box">
+				<h4><%= m.movie.title %></h4>
+				
+				<%= m.movie.synopsis %><br>
+				<b>Release Year:</b> <%= m.movie.release_year %> |
+				<b>Runtime:</b> <%= m.movie.runtime %> Minutes |
+				<b>Director:</b> <%#= m.director %><br>
+				<!-- <b>Rated:</b> <%= m.movie.content_rating %><br> -->
+				<% if !m.movie.rt_score.nil? %>
+					<% if m.movie.rt_score > 59 %>
+					<% end %>
+					<b>Rotten Tomatoes:</b> <%= m.movie.rt_score %>%<br>
+				<% end %>
+				<!-- <b>Available Since:</b> <%#= m.netflix_movie.available_since.strftime("%B %d, %Y") %><br> -->
+				<%#= link_to "Netflix", m.netflix_movie.page_link %><br>
+			</div>
+			
+		</div>
+
+	<% end %><br>
+
+	<%#= will_paginate @posts %>
+</div>

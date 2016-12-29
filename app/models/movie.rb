@@ -11,6 +11,13 @@ class Movie < ActiveRecord::Base
 	# 	aggregator = WorthWatching::Aggregator.new(ENV["rt_api_key"], ENV["tmdb_api_key"])
 	# end
 
+	def self.hbo_details
+		Rails.logger.level = 1
+		@movies = HboMovie.all.each do |m|
+			m.movie.find_tmdb_entry
+		end
+	end
+
 	def get_info
 		self.find_tmdb_entry
 		self.get_imdb_id

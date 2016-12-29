@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get    'test'         => 'movies#test'
   get    'import'       => 'movies#import'
+  get    'hbo'          => 'hbo_movies#index'
+  get    'netflix'      => 'netflix_movies#index'
 
   resources :movies
 
